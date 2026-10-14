@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123b66">
+<title>Gestión de Servicios</title>
+<style>
+:root{--blue:#123b66;--cyan:#0ea5c6;--bg:#f3f6fa;--text:#182230;--muted:#64748b;--line:#dbe3ec}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,var(--blue),#087eaa);color:#fff;padding:22px 16px 18px}header h1{margin:0;font-size:24px}header p{margin:6px 0 0;opacity:.9}
+main{max-width:980px;margin:auto;padding:14px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.tabs button{white-space:nowrap;border:0;border-radius:10px;padding:11px 14px;background:#e2eaf3;color:var(--blue);font-weight:700}.tabs button.active{background:var(--blue);color:#fff}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px #19324a0a}.panel h2{font-size:18px;margin:0 0 12px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}label{display:block;font-size:13px;font-weight:650;color:#42526a}input,select,textarea{width:100%;margin-top:5px;padding:11px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;font:inherit;color:inherit}button.primary{border:0;border-radius:9px;padding:12px 15px;background:var(--cyan);color:#fff;font-weight:750;cursor:pointer}button.danger{border:0;border-radius:8px;padding:7px 9px;background:#fee2e2;color:#991b1b;cursor:pointer}.wide{grid-column:1/-1}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:22px;margin-top:5px}.item{border-top:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;gap:12px;align-items:start}.item:first-child{border-top:0}.item strong{display:block}.muted{font-size:13px;color:var(--muted);margin-top:3px}.empty{color:var(--muted);padding:12px 0}.notice{font-size:12px;color:var(--muted);line-height:1.5}section[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Gestión de Servicios</h1><p>Agenda y administra servicios para empresas</p></header>
+<main>
+<div class="stats">
+ <div class="stat"><span>Empresas registradas</span><strong id="statCompanies">0</strong></div>
+ <div class="stat"><span>Profesionales</span><strong id="statPros">0</strong></div>
+ <div class="stat"><span>Citas registradas</span><strong id="statAppointments">0</strong></div>
+ <div class="stat"><span>Pagos por agendamiento</span><strong id="statPayments">$0</strong></div>
+</div>
+<nav class="tabs">
+<button class="active" data-tab="appointments">Citas</button><button data-tab="companies">Empresas</button><button data-tab="professionals">Profesionales</button>
+</nav>
+<section id="appointments">
+<div class="panel"><h2>Agendar una cita</h2>
+<form id="appointmentForm">
+<label>Empresa<select id="appointmentCompany" required><option value="">Selecciona empresa</option></select></label>
+<label>Profesional<select id="appointmentPro" required><option value="">Selecciona profesional</option></select></label>
+<label>Fecha y hora<input id="appointmentDate" type="datetime-local" required></label>
+<label>Servicio<input id="appointmentService" required placeholder="Ej. Mantenimiento"></label>
+<label>Estado<select id="appointmentStatus"><option>Agendada</option><option>Confirmada</option><option>Realizada</option><option>Cancelada</option></select></label>
+<label>Notas<input id="appointmentNotes" placeholder="Opcional"></label>
+<div class="wide"><button class="primary" type="submit">Guardar cita</button></div>
+</form></div>
+<div class="panel"><h2>Citas registradas</h2><div id="appointmentList"></div></div>
+</section>
+<section id="companies" hidden>
+<div class="panel"><h2>Registrar empresa</h2><form id="companyForm">
+<label>Nombre de empresa<input id="companyName" required placeholder="Nombre comercial"></label>
+<label>Persona de contacto<input id="companyContact" placeholder="Nombre del contacto"></label>
+<label>Teléfono<input id="companyPhone" type="tel" placeholder="Teléfono"></label>
+<label>Correo<input id="companyEmail" type="email" placeholder="correo@empresa.com"></label>
+<div class="wide"><button class="primary" type="submit">Guardar empresa</button></div>
+</form></div>
+<div class="panel"><h2>Empresas registradas</h2><div id="companyList"></div></div>
+</section>
+<section id="professionals" hidden>
+<div class="panel"><h2>Registrar profesional</h2><form id="professionalForm">
+<label>Nombre completo<input id="proName" required placeholder="Nombre del profesional"></label>
+<label>Especialidad o servicio<input id="proSpecialty" required placeholder="Ej. Electricista"></label>
+<label>Modalidad de pago<select id="proPayType"><option value="payroll">Nómina (sin pago por cita)</option><option value="perAppointment">Pago por agendamiento</option></select></label>
+<label>Valor por agendamiento (COP)<input id="proFee" type="number" min="0" step="100" value="0"></label>
+<div class="wide"><button class="primary" type="submit">Guardar profesional</button></div>
+</form><p class="notice">Para personal de nómina, el valor por cita se calcula en $0. Para pago por agendamiento, se utiliza la tarifa que registres.</p></div>
+<div class="panel"><h2>Profesionales registrados</h2><div id="professionalList"></div></div>
+</section>
+<p class="notice">Versión inicial de prueba: los datos se guardan únicamente en este navegador y dispositivo. No desinstales ni borres los datos del navegador si necesitas conservarlos. Esta versión no tiene acceso multiusuario ni sincronización en la nube.</p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const read = (key) => { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } };
+let companies=read('gs_companies'), professionals=read('gs_professionals'), appointments=read('gs_appointments');
+const money = n => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Number(n)||0);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){localStorage.setItem('gs_companies',JSON.stringify(companies));localStorage.setItem('gs_professionals',JSON.stringify(professionals));localStorage.setItem('gs_appointments',JSON.stringify(appointments));render();}
+function removeItem(type,id){if(!confirm('¿Seguro que deseas eliminar este registro?'))return;if(type==='company'){companies=companies.filter(x=>x.id!==id);appointments=appointments.filter(x=>x.companyId!==id)}if(type==='professional'){professionals=professionals.filter(x=>x.id!==id);appointments=appointments.filter(x=>x.proId!==id)}if(type==='appointment')appointments=appointments.filter(x=>x.id!==id);save();}
+function options(id,items,label){const sel=$(id), old=sel.value;sel.innerHTML='<option value="">Selecciona '+label+'</option>'+items.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');if(items.some(x=>x.id===old))sel.value=old;}
+function render(){
+ $('statCompanies').textContent=companies.length;$('statPros').textContent=professionals.length;$('statAppointments').textContent=appointments.length;
+ $('statPayments').textContent=money(appointments.filter(a=>a.status!=='Cancelada').reduce((sum,a)=>sum+Number(a.fee||0),0));
+ options('appointmentCompany',companies,'empresa');options('appointmentPro',professionals,'profesional');
+ $('companyList').innerHTML=companies.length?companies.map(c=>`<div class="item"><div><strong>${esc(c.name)}</strong><div class="muted">${esc(c.contact||'Sin contacto')} · ${esc(c.phone||'Sin teléfono')} · ${esc(c.email||'Sin correo')}</div></div><button class="danger" onclick="removeItem('company','${c.id}')">Eliminar</button></div>`).join(''):'<div class="empty">Todavía no hay empresas.</div>';
+ $('professionalList').innerHTML=professionals.length?professionals.map(p=>`<div class="item"><div><strong>${esc(p.name)}</strong><div class="muted">${esc(p.specialty)} · ${p.payType==='payroll'?'Nómina':('Por cita: '+money(p.fee))}</div></div><button class="danger" onclick="removeItem('professional','${p.id}')">Eliminar</button></div>`).join(''):'<div class="empty">Todavía no hay profesionales.</div>';
+ const sorted=[...appointments].sort((a,b)=>a.date.localeCompare(b.date));
+ $('appointmentList').innerHTML=sorted.length?sorted.map(a=>{const c=companies.find(x=>x.id===a.companyId),p=professionals.find(x=>x.id===a.proId);return `<div class="item"><div><strong>${esc(a.service)} — ${esc(c?.name||'Empresa eliminada')}</strong><div class="muted">${esc(p?.name||'Profesional eliminado')} · ${esc(new Date(a.date).toLocaleString('es-CO'))}</div><div class="muted">Estado: ${esc(a.status)} · Pago estimado: ${money(a.fee)}${a.notes?' · '+esc(a.notes):''}</div></div><button class="danger" onclick="removeItem('appointment','${a.id}')">Eliminar</button></div>`}).join(''):'<div class="empty">Todavía no hay citas agendadas.</div>';
+}
+$('companyForm').addEventListener('submit',e=>{e.preventDefault();companies.push({id:crypto.randomUUID(),name:$('companyName').value.trim(),contact:$('companyContact').value.trim(),phone:$('companyPhone').value.trim(),email:$('companyEmail').value.trim()});e.target.reset();save();alert('Empresa guardada.');});
+$('professionalForm').addEventListener('submit',e=>{e.preventDefault();const payType=$('proPayType').value;professionals.push({id:crypto.randomUUID(),name:$('proName').value.trim(),specialty:$('proSpecialty').value.trim(),payType,fee:payType==='perAppointment'?Math.max(0,Number($('proFee').value)||0):0});e.target.reset();$('proFee').value='0';save();alert('Profesional guardado.');});
+$('proPayType').addEventListener('change',()=>{$('proFee').disabled=$('proPayType').value==='payroll';if($('proFee').disabled)$('proFee').value='0';});
+$('appointmentForm').addEventListener('submit',e=>{e.preventDefault();const p=professionals.find(x=>x.id===$('appointmentPro').value);if(!p){alert('Primero registra y selecciona un profesional.');return;}appointments.push({id:crypto.randomUUID(),companyId:$('appointmentCompany').value,proId:p.id,date:$('appointmentDate').value,service:$('appointmentService').value.trim(),status:$('appointmentStatus').value,notes:$('appointmentNotes').value.trim(),fee:p.payType==='perAppointment'?Number(p.fee)||0:0});e.target.reset();save();alert('Cita guardada.');});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['appointments','companies','professionals'].forEach(id=>$(id).hidden=id!==b.dataset.tab);}));
+render();
+</script>
+</body>
+</html>
